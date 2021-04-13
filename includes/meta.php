@@ -317,17 +317,6 @@ class Meta
 		$data = is_array( $data ) ? array_filter( $data ) : array();
 		$data = array_intersect_key( $data, $this->get_meta_fields() );
 		$data = apply_filters( self::FILTER_SET_META, $data, $post_id );
-
-		/*
-		empty( $data['credit'] )
-			? delete_post_meta( $post_id, Main::META_CREDIT. '_credit' )
-			: update_post_meta( $post_id, Main::META_CREDIT. '_credit', sanitize_text_field( $data['credit'] ) );
-
-		empty( $data['copyright'] )
-			? delete_post_meta( $post_id, Main::META_CREDIT. '_copyright' )
-			: update_post_meta( $post_id, Main::META_CREDIT. '_copyright', sanitize_text_field( $data['copyright'] ) );
-		*/
-
 		return (bool) update_post_meta( $post_id, self::META_CREDIT, wp_kses_post_deep( $data ) );
 	}
 
@@ -546,6 +535,8 @@ class Meta
 			if ( get_option( Admin::OPTION_DELETE_SETTINGS ) ) {
 				delete_metadata( 'post', 0, self::META_CREDIT, '', true );
 			}
+			delete_metadata( 'post', 0, self::META_CREDIT . '_credit', '', true );
+			delete_metadata( 'post', 0, self::META_CREDIT . '_copyright', '', true );
 		}
 	}
 }

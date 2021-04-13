@@ -1,29 +1,56 @@
-<?php namespace peroks\plugin_customer\plugin_package;
+<?php namespace silverscreen\plugins\photo_credit;
 /*
- * Plugin Name:       [This Plugin Name]
- * Plugin URI:        https://github.com/Peroks-01/wp-plugin-template
- * Description:       [This plugin description]
+ * Plugin Name:       Photo Credit
+ * Plugin URI:        https://github.com/silverscreen-tours/photo-credit
+ * Description:       Adds photo credit information to media assets.
  *
- * Text Domain:       [plugin-text-domain]
+ * Text Domain:       photo-credit
  * Domain Path:       /languages
  *
- * Author:            Per Egil Roksvaag
- * Author URI:        https://codeable.io/developers/per-egil-roksvaag/
+ * Author:            Silverscreen Tours
+ * Author URI:        https://www.silverscreen.tours/
  *
- * Version:           0.1.0
- * Stable tag:        0.1.0
+ * Version:           2.0.0
+ * Stable tag:        2.0.0
  * Requires at least: 5.0
- * Tested up to:      5.6
+ * Tested up to:      5.7
  * Requires PHP:      7.0
+ *
+ * License:           MIT License
+ * License URI:       https://opensource.org/licenses/MIT
+ *
+ * Copyright © Silverscreen Tours GmbH
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
  */
 
 /**
- * The [This Plugin Name] plugin main class.
+ * The Photo Credit plugin main class.
  *
  * @author Per Egil Roksvaag
- * @version 0.1.0
+ * @copyright Silverscreen Tours GmbH
+ * @license MIT
+ *
+ * @version 2.0.0
  */
-class Main {
+class Main
+{
 	/**
 	 * @var string The plugin file.
 	 */
@@ -35,7 +62,7 @@ class Main {
 	 * @var string The plugin name.
 	 * @todo Globally search and replace this with your own plugin name.
 	 */
-	const NAME = '[This Plugin Name]';
+	const NAME = 'Photo Credit';
 
 	/**
 	 * Must be identical to "Domain Path" in the plugin header comment above.
@@ -44,7 +71,7 @@ class Main {
 	 * @var string The plugin text domain (hyphen).
 	 * @todo Globally search and replace this with your own unique text domain
 	 */
-	const DOMAIN = '[plugin-text-domain]';
+	const DOMAIN = 'photo-credit';
 
 	/**
 	 * Should be similar to self::DOMAIN, only with underscores instead of hyphens.
@@ -53,7 +80,7 @@ class Main {
 	 * @var string The plugin prefix (underscore).
 	 * @todo Replace this constant with your own unique plugin prefix.
 	 */
-	const PREFIX = 'plugin_prefix';
+	const PREFIX = 'photo_credit';
 
 	/**
 	 * Should contain the "Version" field in the plugin header comment above.
@@ -61,7 +88,7 @@ class Main {
 	 * @var string The plugin version.
 	 * @todo Set your plugin version number.
 	 */
-	const VERSION = '0.1.0';
+	const VERSION = '2.0.0';
 
 	/**
 	 * Only requirement constants > '0' will be checked.
@@ -70,12 +97,8 @@ class Main {
 	 * @todo Replace this with the system requirements of your owe plugin.
 	 * @see Main::check() below and possibly add/remove system checks and constants.
 	 */
-	const REQUIRE_PHP  = '7.0';	//	Required PHP version
-	const REQUIRE_WP   = '5.0';	//	Required WordPress version
-	const REQUIRE_ACF  = '0';	//	Required Advanced Custom Fields version
-	const REQUIRE_WOO  = '0';	//	Required WooCommerce version
-	const REQUIRE_LMS  = '0';	//	Required LearnDash LMS version
-	const REQUIRE_WPML = '0';	//	Required WordPress Multilingual version
+	const REQUIRE_PHP = '7.0';	//	Required PHP version
+	const REQUIRE_WP  = '5.0';	//	Required WordPress version
 
 	/**
 	 * @var string The plugin global action hooks.
@@ -144,7 +167,6 @@ class Main {
 			__NAMESPACE__ . '\Modal'     => static::plugin_path( 'includes/tools/modal.php' ),
 			__NAMESPACE__ . '\Utils'     => static::plugin_path( 'includes/tools/utils.php' ),
 			__NAMESPACE__ . '\Form'      => static::plugin_path( 'includes/tools/form.php' ),
-			__NAMESPACE__ . '\Download'  => static::plugin_path( 'includes/tools/download.php' ),
 		) );
 
 		spl_autoload_register( function ( $name ) use ( $classes ) {
@@ -168,7 +190,6 @@ class Main {
 
 		if ( is_admin() ) {
 			Admin::instance();
-			Download::instance();
 		}
 	}
 
@@ -203,32 +224,6 @@ class Main {
 			}
 		}
 
-		if ( defined( 'self::REQUIRE_ACF' ) && self::REQUIRE_ACF ) {
-			if ( version_compare( get_option( 'acf_version', 0 ), self::REQUIRE_ACF ) < 0 ) {
-				$error = static::error( 'WordPress', self::REQUIRE_WP ) || $error;
-			}
-		}
-
-		if ( defined( 'self::REQUIRE_WOO' ) && self::REQUIRE_WOO ) {
-			global $woocommerce;
-
-			if ( empty( is_a( $woocommerce, 'WooCommerce' ) ) || version_compare( $woocommerce->version, self::REQUIRE_WOO ) < 0 ) {
-				$error = static::error( 'WooCommerce', self::REQUIRE_WOO ) || $error;
-			}
-		}
-
-		if ( defined( 'self::REQUIRE_LMS' ) && self::REQUIRE_LMS ) {
-			if ( empty( defined( '\LEARNDASH_VERSION' ) ) || version_compare( \LEARNDASH_VERSION, self::REQUIRE_LMS ) < 0 ) {
-				$error = static::error( 'LearnDash LMS', self::REQUIRE_LMS ) || $error;
-			}
-		}
-
-		if ( defined( 'self::REQUIRE_WPML' ) && self::REQUIRE_WPML ) {
-			if ( empty( defined( '\ICL_SITEPRESS_VERSION' ) ) || version_compare( \ICL_SITEPRESS_VERSION, self::REQUIRE_WPML ) < 0 ) {
-				$error = static::error( 'WPML (WordPress Multilingual)', self::REQUIRE_WPML ) || $error;
-			}
-		}
-
 		return empty( $error );
 	}
 
@@ -244,13 +239,13 @@ class Main {
 			if ( is_admin() ) {
 
 				//	Error message
-				$message = __( '%1$s requires %2$s version %3$s or higher, the plugin is NOT RUNNING.', '[plugin-text-domain]' );
+				$message = __( '%1$s requires %2$s version %3$s or higher, the plugin is NOT RUNNING.', 'photo-credit' );
 				$message = sprintf( $message, self::NAME, $require, $version );
 
 				//	Admin notice output
 				$notice = function () use ( $message ) {
 					vprintf( '<div class="notice notice-error"><p><strong>%s: </strong>%s</p></div>', array(
-						esc_html__( 'Error', '[plugin-text-domain]' ),
+						esc_html__( 'Error', 'photo-credit' ),
 						esc_html( $message ),
 					) );
 				};
@@ -284,7 +279,7 @@ class Main {
 
 			add_action( 'wp_loaded', 'flush_rewrite_rules' );
 			add_action( 'admin_notices', function () {
-				$notice = __( '%s has been updated to version %s', '[plugin-text-domain]' );
+				$notice = __( '%s has been updated to version %s', 'photo-credit' );
 				$notice = sprintf( $notice, self::NAME, self::VERSION );
 				printf( '<div class="notice notice-success is-dismissible"><p>%s.</p></div>', esc_html( $notice ) );
 				error_log( $notice );
@@ -316,7 +311,7 @@ class Main {
 		if ( is_admin() && current_user_can( 'activate_plugins' ) ) {
 			do_action( self::ACTION_ACTIVATE, static::instance(), self::VERSION, get_option( self::OPTION_VERSION ) );
 			update_option( self::OPTION_VERSION, self::VERSION );
-			$message = __( '%s version %s has been activated', '[plugin-text-domain]' );
+			$message = __( '%s version %s has been activated', 'photo-credit' );
 			error_log( sprintf( $message, self::NAME, self::VERSION ) );
 			flush_rewrite_rules();
 		}
@@ -330,7 +325,7 @@ class Main {
 	public static function deactivate() {
 		if ( is_admin() && current_user_can( 'activate_plugins' ) ) {
 			do_action( self::ACTION_DEACTIVATE, static::instance(), self::VERSION, get_option( self::OPTION_VERSION ) );
-			$message = __( '%s version %s has been deactivated', '[plugin-text-domain]' );
+			$message = __( '%s version %s has been deactivated', 'photo-credit' );
 			error_log( sprintf( $message, self::NAME, self::VERSION ) );
 			flush_rewrite_rules();
 		}
@@ -345,7 +340,7 @@ class Main {
 		if ( is_admin() && current_user_can( 'delete_plugins' ) ) {
 			do_action( self::ACTION_DELETE, static::instance(), self::VERSION, get_option( self::OPTION_VERSION ) );
 			delete_option( self::OPTION_VERSION );
-			$message = __( '%s version %s has been removed', '[plugin-text-domain]' );
+			$message = __( '%s version %s has been removed', 'photo-credit' );
 			error_log( sprintf( $message, self::NAME, self::VERSION ) );
 			flush_rewrite_rules();
 		}

@@ -1,9 +1,12 @@
-<?php namespace peroks\plugin_customer\plugin_package;
+<?php namespace silverscreen\plugins\photo_credit;
 
 /**
  * Misc utility and helper functions.
  *
  * @author Per Egil Roksvaag
+ * @copyright Silverscreen Tours GmbH
+ * @license MIT
+ *
  * @method static Utils instance() Gets the singleton class instance
  */
 class Utils

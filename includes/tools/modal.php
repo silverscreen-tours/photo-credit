@@ -1,10 +1,13 @@
-<?php namespace peroks\plugin_customer\plugin_package;
+<?php namespace silverscreen\plugins\photo_credit;
 /**
  * Creates modal dialogs.
  *
  * @author Per Egil Roksvaag
+ * @copyright Silverscreen Tours GmbH
+ * @license MIT
  */
-class Modal {
+class Modal
+{
 	use Singleton;
 
 	/**
@@ -113,7 +116,7 @@ class Modal {
 			'type'      => 'button',
 			'class'     => array(),
 			'icon'      => '',
-			'text'      => __( 'Open', '[plugin-text-domain]' ),
+			'text'      => __( 'Open', 'photo-credit' ),
 		) );
 
 		$template = $args['type'];
@@ -277,7 +280,7 @@ class Modal {
 			'header' => true,
 			'body'   => true,
 			'footer' => true,
-			'title'  => __( 'Title', '[plugin-text-domain]' ),
+			'title'  => __( 'Title', 'photo-credit' ),
 		) );
 
 		if ( $args['header'] ) {
@@ -292,7 +295,7 @@ class Modal {
 		}
 
 		if ( $args['footer'] ) {
-			$text     = esc_html__( 'OK', '[plugin-text-domain]' );
+			$text     = esc_html__( 'OK', 'photo-credit' );
 			$default  = sprintf( '<button type="button" class="pure-modal-button">%s</button>', $text );
 			$buttons  = wp_kses_post( $args['buttons'] ?? $default );
 			$footer   = sprintf( '<div class="pure-modal-footer">%s</div>', $buttons );
@@ -323,7 +326,7 @@ class Modal {
 			'header'  => true,
 			'body'    => true,
 			'footer'  => true,
-			'title'   => __( 'Title', '[plugin-text-domain]' ),
+			'title'   => __( 'Title', 'photo-credit' ),
 			'method'  => 'POST',
 			'action'  => home_url( $wp->request ),
 			'enctype' => 'multipart/form-data',
@@ -341,7 +344,7 @@ class Modal {
 		}
 
 		if ( $args['footer'] ) {
-			$text     = esc_html__( 'Submit', '[plugin-text-domain]' );
+			$text     = esc_html__( 'Submit', 'photo-credit' );
 			$default  = sprintf( '<button type="submit" class="pure-modal-button">%s</button>', $text );
 			$buttons  = wp_kses_post( $args['buttons'] ?? $default );
 			$footer   = sprintf( '<div class="pure-modal-footer">%s</div>', $buttons );

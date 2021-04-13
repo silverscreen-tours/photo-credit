@@ -1,12 +1,15 @@
-<?php namespace peroks\plugin_customer\plugin_package;
+<?php namespace silverscreen\plugins\photo_credit;
 /**
  * Plugin asset handler.
  *
  * Enqueues styles and scripts, enables stylesheet inlining and JavaScript defer / async.
  *
  * @author Per Egil Roksvaag
+ * @copyright Silverscreen Tours GmbH
+ * @license MIT
  */
-class Asset {
+class Asset
+{
 	use Singleton;
 
 	/**
@@ -247,9 +250,9 @@ class Asset {
 		Admin::instance()->add_section( array(
 			'section'     => self::SECTION_ASSET,
 			'page'        => Admin::PAGE,
-			'label'       => __( 'Asset settings', '[plugin-text-domain]' ),
+			'label'       => __( 'Asset settings', 'photo-credit' ),
 			'description' => vsprintf( '<p>%s</p>', array(
-				esc_html__( 'Check the below checkboxes to improve asset performance.', '[plugin-text-domain]' ),
+				esc_html__( 'Check the below checkboxes to improve asset performance.', 'photo-credit' ),
 			) ),
 		) );
 
@@ -258,8 +261,8 @@ class Asset {
 			'option'      => self::OPTION_ASSET_STYLE_INLINE,
 			'section'     => self::SECTION_ASSET,
 			'page'        => Admin::PAGE,
-			'label'       => __( 'Inline stylesheets', '[plugin-text-domain]' ),
-			'description' => __( 'Check to enable stylesheet inlining.', '[plugin-text-domain]' ),
+			'label'       => __( 'Inline stylesheets', 'photo-credit' ),
+			'description' => __( 'Check to enable stylesheet inlining.', 'photo-credit' ),
 		) );
 
 		//	Defer JavaScript
@@ -267,8 +270,8 @@ class Asset {
 			'option'      => self::OPTION_ASSET_SCRIPT_DEFER,
 			'section'     => self::SECTION_ASSET,
 			'page'        => Admin::PAGE,
-			'label'       => __( 'Defer JavaScript', '[plugin-text-domain]' ),
-			'description' => __( 'Check to enable deferred or async JavasScript.', '[plugin-text-domain]' ),
+			'label'       => __( 'Defer JavaScript', 'photo-credit' ),
+			'description' => __( 'Check to enable deferred or async JavasScript.', 'photo-credit' ),
 		) );
 	}
 

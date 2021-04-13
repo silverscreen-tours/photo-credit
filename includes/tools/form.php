@@ -1,10 +1,13 @@
-<?php namespace peroks\plugin_customer\plugin_package;
+<?php namespace silverscreen\plugins\photo_credit;
 /**
  * Displays input fields and forms.
  *
  * @author Per Egil Roksvaag
+ * @copyright Silverscreen Tours GmbH
+ * @license MIT
  */
-class Form {
+class Form
+{
 	const FILTER_FORM         = Main::PREFIX . '_form';
 	const FILTER_FORM_FIELD   = Main::PREFIX . '_form_field';
 	const FILTER_FORM_LABEL   = Main::PREFIX . '_form_label';
@@ -301,7 +304,7 @@ class Form {
 	public function button( array $attr = array() ) {
 		$attr = wp_parse_args( $attr, array(
 			'type'  => 'button',
-			'value' => __( 'Submit', '[plugin-text-domain]' ),
+			'value' => __( 'Submit', 'photo-credit' ),
 		) );
 
 		$output[] = vsprintf( '<button class="peroks-form-control"%s>%s</button>', array(

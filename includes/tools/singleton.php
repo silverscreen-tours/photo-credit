@@ -1,10 +1,13 @@
-<?php namespace peroks\plugin_customer\plugin_package;
+<?php namespace silverscreen\plugins\photo_credit;
 /**
  * Implements the singleton pattern.
  *
  * @author Per Egil Roksvaag
+ * @copyright Silverscreen Tours GmbH
+ * @license MIT
  */
-trait Singleton {
+trait Singleton
+{
 	/**
 	 * @var object The class singleton.
 	 */

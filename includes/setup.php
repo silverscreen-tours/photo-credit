@@ -1,10 +1,13 @@
-<?php namespace peroks\plugin_customer\plugin_package;
+<?php namespace silverscreen\plugins\photo_credit;
 /**
  * Plugin setup.
  *
  * @author Per Egil Roksvaag
+ * @copyright Silverscreen Tours GmbH
+ * @license MIT
  */
-class Setup {
+class Setup
+{
 	use Singleton;
 
 	/**
@@ -43,7 +46,7 @@ class Setup {
 	 */
 	public function wp_enqueue_styles() {
 		$args = array( 'inline' => true );
-		Asset::instance()->enqueue_style( 'assets/css/this-plugin-name.min.css', array(), $args );
+		Asset::instance()->enqueue_style( 'assets/css/photo-credit.min.css', array(), $args );
 	}
 
 	/**
@@ -51,6 +54,6 @@ class Setup {
 	 */
 	public function wp_enqueue_scripts() {
 		$args = array( 'async' => true );
-		Asset::instance()->enqueue_script( 'assets/js/this-plugin-name.min.js', array(), $args );
+		Asset::instance()->enqueue_script( 'assets/js/photo-credit.min.js', array(), $args );
 	}
 }

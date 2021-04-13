@@ -160,6 +160,7 @@ class Main
 	protected function autoload() {
 		$classes = apply_filters( self::FILTER_CLASS_PATH, array(
 			__NAMESPACE__ . '\Setup' => static::plugin_path( 'includes/setup.php' ),
+			__NAMESPACE__ . '\Meta'  => static::plugin_path( 'includes/meta.php' ),
 			__NAMESPACE__ . '\Admin' => static::plugin_path( 'includes/admin.php' ),
 
 			__NAMESPACE__ . '\Singleton' => static::plugin_path( 'includes/tools/singleton.php' ),
@@ -190,6 +191,7 @@ class Main
 
 		if ( is_admin() ) {
 			Admin::instance();
+			Meta::instance();
 		}
 	}
 

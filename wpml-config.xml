@@ -1,0 +1,7 @@
+<wpml-config>
+	<custom-fields>
+		<custom-field action="copy">photo_credit_credit</custom-field>
+		<custom-field action="ignore">photo_credit_credit_credit</custom-field>
+		<custom-field action="ignore">photo_credit_credit_copyright</custom-field>
+	</custom-fields>
+</wpml-config>

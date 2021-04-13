@@ -15,11 +15,11 @@ class Setup
 	 */
 	protected function __construct() {
 		add_action( 'init', array( $this, 'init' ) );
-		add_action( 'widgets_init', array( $this, 'widgets_init' ) );
+		//	add_action( 'widgets_init', array( $this, 'widgets_init' ) );
 
 		if ( empty( is_admin() ) ) {
-			add_action( 'wp_enqueue_scripts', array( $this, 'wp_enqueue_styles' ) );
-			add_action( 'wp_enqueue_scripts', array( $this, 'wp_enqueue_scripts' ) );
+			//	add_action( 'wp_enqueue_scripts', array( $this, 'wp_enqueue_styles' ) );
+			//	add_action( 'wp_enqueue_scripts', array( $this, 'wp_enqueue_scripts' ) );
 		}
 	}
 

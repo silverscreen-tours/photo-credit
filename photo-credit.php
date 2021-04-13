@@ -165,9 +165,6 @@ class Main
 
 			__NAMESPACE__ . '\Singleton' => static::plugin_path( 'includes/tools/singleton.php' ),
 			__NAMESPACE__ . '\Asset'     => static::plugin_path( 'includes/tools/asset.php' ),
-			__NAMESPACE__ . '\Modal'     => static::plugin_path( 'includes/tools/modal.php' ),
-			__NAMESPACE__ . '\Utils'     => static::plugin_path( 'includes/tools/utils.php' ),
-			__NAMESPACE__ . '\Form'      => static::plugin_path( 'includes/tools/form.php' ),
 		) );
 
 		spl_autoload_register( function ( $name ) use ( $classes ) {
@@ -186,8 +183,6 @@ class Main
 	 */
 	protected function run() {
 		Setup::instance();
-		Asset::instance();
-		Modal::instance();
 
 		if ( is_admin() ) {
 			Admin::instance();

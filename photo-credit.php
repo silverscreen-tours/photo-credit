@@ -10,8 +10,8 @@
  * Author:            Silverscreen Tours
  * Author URI:        https://www.silverscreen.tours/
  *
- * Version:           2.0.0
- * Stable tag:        2.0.0
+ * Version:           2.1.0
+ * Stable tag:        2.1.0
  * Requires at least: 5.0
  * Tested up to:      5.7
  * Requires PHP:      7.0
@@ -47,7 +47,7 @@
  * @copyright Silverscreen Tours GmbH
  * @license MIT
  *
- * @version 2.0.0
+ * @version 2.1.0
  */
 class Main
 {
@@ -88,7 +88,7 @@ class Main
 	 * @var string The plugin version.
 	 * @todo Set your plugin version number.
 	 */
-	const VERSION = '2.0.0';
+	const VERSION = '2.1.0';
 
 	/**
 	 * Only requirement constants > '0' will be checked.
@@ -163,8 +163,9 @@ class Main
 			__NAMESPACE__ . '\Meta'  => static::plugin_path( 'includes/meta.php' ),
 			__NAMESPACE__ . '\Admin' => static::plugin_path( 'includes/admin.php' ),
 
-			__NAMESPACE__ . '\Singleton' => static::plugin_path( 'includes/tools/singleton.php' ),
-			__NAMESPACE__ . '\Asset'     => static::plugin_path( 'includes/tools/asset.php' ),
+			__NAMESPACE__ . '\Singleton'  => static::plugin_path( 'includes/tools/singleton.php' ),
+			__NAMESPACE__ . '\Asset'      => static::plugin_path( 'includes/tools/asset.php' ),
+			__NAMESPACE__ . '\Repository' => static::plugin_path( 'includes/tools/repository.php' ),
 		) );
 
 		spl_autoload_register( function ( $name ) use ( $classes ) {
@@ -187,6 +188,7 @@ class Main
 		if ( is_admin() ) {
 			Admin::instance();
 			Meta::instance();
+			Repository::instance();
 		}
 	}
 

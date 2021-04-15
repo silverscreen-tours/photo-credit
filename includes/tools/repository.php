@@ -264,7 +264,8 @@ class Repository
 				add_option( self::OPTION_REPOSITORY_URL, $value );
 			}
 			if ( is_null( get_option( self::OPTION_REPOSITORY_TOKEN, null ) ) ) {
-				add_option( self::OPTION_REPOSITORY_TOKEN, '' );
+				$token = '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';
+				add_option( self::OPTION_REPOSITORY_TOKEN, $token );
 			}
 		}
 	}

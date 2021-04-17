@@ -16,6 +16,9 @@ Adds photo credit information to media assets.
 
 ## Changelog
 
+### Version 2.1.1 / 2021-04-17
+* Improved auto-updates
+
 ### Version 2.1.0 / 2021-04-14
 * Added plugin update from GitHub repository
 

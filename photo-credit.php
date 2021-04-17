@@ -10,8 +10,8 @@
  * Author:            Silverscreen Tours
  * Author URI:        https://www.silverscreen.tours/
  *
- * Version:           2.1.0
- * Stable tag:        2.1.0
+ * Version:           2.1.1
+ * Stable tag:        2.1.1
  * Requires at least: 5.0
  * Tested up to:      5.7
  * Requires PHP:      7.0
@@ -47,7 +47,7 @@
  * @copyright Silverscreen Tours GmbH
  * @license MIT
  *
- * @version 2.1.0
+ * @version 2.1.1
  */
 class Main
 {
@@ -88,7 +88,7 @@ class Main
 	 * @var string The plugin version.
 	 * @todo Set your plugin version number.
 	 */
-	const VERSION = '2.1.0';
+	const VERSION = '2.1.1';
 
 	/**
 	 * Only requirement constants > '0' will be checked.

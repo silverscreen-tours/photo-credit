@@ -1,8 +1,13 @@
 <?php namespace silverscreen\plugins\photo_credit;
 /**
- * Enables automated plugin updates from a GitHub repopistory.
+ * Enables automated plugin updates from a GitHub reposistory.
+ *
+ * This class was inspired by the article "How To Deploy WordPress Plugins With GitHub Using Transients"
+ * by Matthew Ray.
  *
  * @see https://www.smashingmagazine.com/2015/08/deploy-wordpress-plugins-with-github-using-transients/
+ * @see http://www.matthewray.com/
+ *
  * @author Per Egil Roksvaag
  */
 class Repository
@@ -41,9 +46,9 @@ class Repository
 	public function init() {
 		if ( get_option( self::OPTION_REPOSITORY_URL ) ) {
 			add_filter( 'pre_set_site_transient_update_plugins', array( $this, 'update_plugins' ) );
-			add_filter( 'plugins_api', array( $this, 'plugins_api' ), 10, 3);
+			add_filter( 'plugins_api', array( $this, 'plugins_api' ), 10, 3 );
 			add_filter( 'upgrader_pre_download', array( $this, 'upgrader_pre_download' ), 10, 4 );
-			add_filter( 'upgrader_post_install', array( $this, 'upgrader_post_install' ), 10, 3 );
+			add_filter( 'upgrader_source_selection', array( $this, 'upgrader_source_selection' ), 10, 4 );
 		}
 	}
 
@@ -65,24 +70,23 @@ class Repository
 
 			//	Do we have a valid relase object?
 			if ( empty( is_wp_error( $release ) ) && is_object( $release ) ) {
-				$basename = plugin_basename( Main::FILE );
-				$version  = trim( $release->tag_name, 'v' );
+				$base    = plugin_basename( Main::FILE );
+				$plugin  = (object) get_plugin_data( Main::FILE );
+				$version = trim( $release->tag_name, 'v' );
 
 				//	Is a newer version available on GitHub?
 				if ( version_compare( $version, Main::VERSION, '>' ) ) {
-					$plugin = (object) array(
-						'url'         => get_option( self::OPTION_REPOSITORY_URL ),
-						'slug'        => current( explode( '/', $basename ) ),
-						'package'     => $release->zipball_url,
-						'new_version' => $version,
+					$transient->response[ $base ] = (object) array(
+						'url'          => $plugin->PluginURI,
+						'slug'         => current( explode( '/', $base ) ),
+						'plugin'       => $base,
+						'package'      => $release->zipball_url,
+						'new_version'  => $version,
+						'requires_php' => $plugin->RequiresPHP,
 					);
-
-					//	Set plugin update info
-					$transient->response[ $basename ] = $plugin;
 				}
 			}
 		}
-
 		return $transient;
 	}
 
@@ -99,20 +103,21 @@ class Repository
 		$slug = current( explode( '/', $base ) );
 
 		if ( property_exists( $args, 'slug' ) && $args->slug == $slug ) {
-			$data    = get_plugin_data( Main::FILE );
+			$plugin  = (object) get_plugin_data( Main::FILE );
 			$release = $this->get_latest_release();
 
 			return (object) array(
-				'name'              => $data['Name'],
-				'slug'              => $base,
+				'name'              => $plugin->Name,
+				'slug'              => $slug,
+				'plugin'            => $base,
 				'version'           => trim( $release->tag_name, 'v' ),
-				'author'            => $data['AuthorName'],
-				'author_profile'    => $data['AuthorURI'],
+				'author'            => $plugin->AuthorName,
+				'author_profile'    => $plugin->AuthorURI,
 				'last_updated'      => $release->published_at,
-				'homepage'          => $data['PluginURI'],
-				'short_description' => $data['Description'],
+				'homepage'          => $plugin->PluginURI,
+				'short_description' => $plugin->Description,
 				'sections'          => array(
-					'Description' => $data['Description'],
+					'Description' => $plugin->Description,
 					'Updates'     => $release->body,
 				),
 				'download_link' => $release->zipball_url,
@@ -122,49 +127,56 @@ class Repository
 	}
 
 	/**
-	 * Adds authorisation headers.
+	 * Adds an authorisation header for private GitHub repositories.
+	 *
+	 * You can create a "Personal access token" in GitHub.
 	 *
 	 * @param bool $reply Whether to bail without returning the package. Default false.
 	 * @param string $package The package file name.
 	 * @param WP_Upgrader $upgrader The WP_Upgrader instance.
 	 * @param array $hook_extra Extra arguments passed to hooked filters.
+	 * @return bool The modified reply.
 	 */
 	public function upgrader_pre_download ( $reply, $package, $upgrader, $hook_extra ) {
-		if ( $token = get_option( self::OPTION_REPOSITORY_TOKEN ) ) {
-			$release = $this->get_latest_release();
-			$base    = plugin_basename( Main::FILE );
+		$plugin = $hook_extra['plugin'] ?? null;
+		$base   = plugin_basename( Main::FILE );
 
-			if ( in_array( $base, $hook_extra ) && $package == $release->zipball_url ) {
-				add_filter( 'http_request_args', function ( $args, $url ) use ( $release, $token ) {
-					if ( isset( $args['filename'] ) && $url == $release->zipball_url ) {
-						$args['headers']['Authorization'] = "token {$token}";
-					}
-					return $args;
-				}, 10, 2 );
-			}
+		if ( $base === $plugin && $token = get_option( self::OPTION_REPOSITORY_TOKEN ) ) {
+			add_filter( 'http_request_args', function ( $args, $url ) use ( $package, $token ) {
+				if ( isset( $args['filename'] ) && $url === $package ) {
+					$args['headers']['Authorization'] = "token {$token}";
+				}
+				return $args;
+			}, 10, 2 );
 		}
 
 		return $reply;
 	}
 
 	/**
-	 * Install and activate the updated plugin.
+	 * Moves the source file location for the upgrade package.
 	 *
-	 * @param bool $response Installation response.
+	 * @param string $source File source location.
+	 * @param string $remote_source Remote file source location.
+	 * @param WP_Upgrader $upgrader WP_Upgrader instance.
 	 * @param array $hook_extra Extra arguments passed to hooked filters.
-	 * @param array $result Installation result data.
-	 * @return
+	 * @return string The modified source file location.
 	 */
-	public function upgrader_post_install( $response, $hook_extra, $result ) {
+	public function upgrader_source_selection( $source, $remote_source, $upgrader, $hook_extra ) {
 		global $wp_filesystem;
 
-		$plugin_dir = Main::instance()->plugin_path(); // Our plugin directory
-		$wp_filesystem->move( $result['destination'], $plugin_dir ); // Move files to the plugin dir
-		$result['destination'] = $plugin_dir; // Set the destination for the rest of the stack
+		$plugin = $hook_extra['plugin'] ?? null;
+		$base   = plugin_basename( Main::FILE );
 
-		//	Reactivate if the plugin
-		activate_plugin( plugin_basename( Main::FILE ) );
-		return $result;
+		//	Set plugin slug and move source accordingly
+		if ( $base === $plugin ) {
+			$slug   = current( explode( '/', $base ) );
+			$target = trailingslashit( dirname( $source ) ) . $slug;
+			$wp_filesystem->move( $source, $target );
+
+			return $target;
+		}
+		return $source;
 	}
 
 	/* -------------------------------------------------------------------------
@@ -192,13 +204,13 @@ class Repository
 
 				$request  = "https://api.github.com/repos/{$path}/releases";
 				$response = wp_remote_get( $request, $args );
-				$status   = $response['response']['code'] ?? 0;
+				$status   = wp_remote_retrieve_response_code( $response );
 
 				if ( is_wp_error( $response ) ) {
 					return $response;
 				}
 
-				if ( $status > 0 && $status < 400 ) {
+				if ( $status && $status < 400 ) {
 					$releases = json_decode( wp_remote_retrieve_body( $response ) );
 					$releases = array_filter( (array) $releases, function ( $release ) {
 						return isset( $release->draft ) && false === $release->draft;
@@ -252,9 +264,9 @@ class Repository
 	public function activate() {
 		if ( is_admin() && current_user_can( 'activate_plugins' ) ) {
 			if ( is_null( get_option( self::OPTION_REPOSITORY_URL, null ) ) ) {
-				$data  = (object) get_plugin_data( Main::FILE );
-				$host  = parse_url( $data->PluginURI, PHP_URL_HOST );
-				$value = 'github.com' == $host ? $data->PluginURI : '';
+				$plugin = (object) get_plugin_data( Main::FILE );
+				$host   = parse_url( $plugin->PluginURI, PHP_URL_HOST );
+				$value  = 'github.com' == $host ? $plugin->PluginURI : '';
 				add_option( self::OPTION_REPOSITORY_URL, $value );
 			}
 			if ( is_null( get_option( self::OPTION_REPOSITORY_TOKEN, null ) ) ) {

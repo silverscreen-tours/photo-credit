@@ -441,9 +441,14 @@ class Meta
 			$meta['source'];
 			$meta['license'];
 			$meta['keywords'];
-			$meta['created_timestamp'][] = wp_exif_date2ts( $exif['DateTimeOriginal'] ?? '' );
-			$meta['created_timestamp'][] = wp_exif_date2ts( $exif['DateTimeDigitized'] ?? '' );
-			$meta['position'][]          = $this->read_exif_gps( $exif );
+			$meta['position'][] = $this->read_exif_gps( $exif );
+
+			if ( ! empty( $exif['DateTimeOriginal'] ) && strtotime( $exif['DateTimeOriginal'] ) ) {
+				$meta['created_timestamp'][] = wp_exif_date2ts( $exif['DateTimeOriginal'] );
+			}
+			if ( ! empty( $exif['DateTimeDigitized'] ) && strtotime( $exif['DateTimeDigitized'] ) ) {
+				$meta['created_timestamp'][] = wp_exif_date2ts( $exif['DateTimeDigitized'] );
+			}
 
 			$meta = apply_filters( self::FILTER_READ_EXIF_META, $meta, $exif, $file, $sourceImageType );
 			return $exif;

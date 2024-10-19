@@ -174,7 +174,7 @@ class Repository
 			$target = trailingslashit( dirname( $source ) ) . $slug;
 			$wp_filesystem->move( $source, $target );
 
-			return $target;
+			return trailingslashit( $target );
 		}
 		return $source;
 	}
